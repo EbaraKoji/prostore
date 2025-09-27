@@ -1,4 +1,5 @@
 import { Product } from '@/db/sample-data';
+import { ProductCard } from './product-card';
 
 interface Props {
   products: Product[];
@@ -18,7 +19,7 @@ export const ProductList = ({ products, title, limit }: Props) => {
       ) : (
         <div className="grid grid-cols1-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {limitedProducts.map((product) => (
-            <div key={product.slug}>{product.name}</div>
+            <ProductCard key={product.slug} product={product} />
           ))}
         </div>
       )}
