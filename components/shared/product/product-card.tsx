@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-// import { Product } from '@/lib/generated/prisma';
 import { ProductSchema } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
