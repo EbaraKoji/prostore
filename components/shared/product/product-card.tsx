@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Product } from '@/db/sample-data';
+import { Product } from '@/lib/generated/prisma';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductPrice } from './product-price';
@@ -22,9 +22,9 @@ export const ProductCard = ({ product }: Props) => {
           <h2 className="text-sm font-medium">{product.name}</h2>
         </Link>
         <div className="flex-between gap-4">
-          <p>{product.rating} Stars</p>
+          <p>{product.rating.toNumber()} Stars</p>
           {product.stock > 0 ? (
-            <ProductPrice value={product.price} />
+            <ProductPrice value={product.price.toNumber()} />
           ) : (
             <p className="text-destructive">Out of Stock</p>
           )}

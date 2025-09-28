@@ -1,4 +1,4 @@
-import { Product } from '@/db/sample-data';
+import { Product } from '@/lib/generated/prisma';
 import { ProductCard } from './product-card';
 
 interface Props {
