@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Product } from '@/lib/generated/prisma';
+// import { Product } from '@/lib/generated/prisma';
+import { ProductSchema } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductPrice } from './product-price';
 
 interface Props {
-  product: Product;
+  product: ProductSchema;
 }
 
 export const ProductCard = ({ product }: Props) => {
@@ -22,9 +23,9 @@ export const ProductCard = ({ product }: Props) => {
           <h2 className="text-sm font-medium">{product.name}</h2>
         </Link>
         <div className="flex-between gap-4">
-          <p>{product.rating.toNumber()} Stars</p>
+          <p>{product.rating} Stars</p>
           {product.stock > 0 ? (
-            <ProductPrice value={product.price.toNumber()} />
+            <ProductPrice value={product.price} />
           ) : (
             <p className="text-destructive">Out of Stock</p>
           )}

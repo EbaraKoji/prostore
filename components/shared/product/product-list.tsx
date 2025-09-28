@@ -1,8 +1,8 @@
-import { Product } from '@/lib/generated/prisma';
+import { ProductSchema } from '@/types';
 import { ProductCard } from './product-card';
 
 interface Props {
-  products: Product[];
+  products: ProductSchema[];
   title?: string;
   limit?: number;
 }
