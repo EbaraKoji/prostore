@@ -1,3 +1,5 @@
+import { hashSync } from 'bcrypt-ts-edge';
+
 export type Product = {
   name: string;
   slug: string;
@@ -13,7 +15,28 @@ export type Product = {
   banner: string | null;
 };
 
-export const sampleData: { products: Product[] } = {
+export type User = {
+  name: string;
+  email: string;
+  password?: string;
+  role: 'user' | 'admin';
+};
+
+export const sampleData: { products: Product[]; users: User[] } = {
+  users: [
+    {
+      name: 'John',
+      email: 'admin@example.com',
+      password: hashSync('123456', 10),
+      role: 'admin',
+    },
+    {
+      name: 'Jane',
+      email: 'user@example.com',
+      password: hashSync('123456', 10),
+      role: 'user',
+    },
+  ],
   products: [
     {
       name: 'Polo Sporting Stretch Shirt',
