@@ -3,39 +3,35 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signInWithCredentials } from '@/lib/actions/user.actions';
-import { signInDefaultValues } from '@/lib/constants';
+import { signUpUser } from '@/lib/actions/user.actions';
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useSearchParams } from 'next/navigation';
 
-export const CredentailsSignInForm = () => {
-  const [signInActionData, signInAction] = useActionState(signInWithCredentials, undefined);
+export const SignUpForm = () => {
+  const [signUpActionData, signUpAction] = useActionState(signUpUser, undefined);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
-  const SignInButton = () => {
+  const SignUpButton = () => {
     const { pending } = useFormStatus();
     return (
       <Button disabled={pending} className="w-full cursor-pointer">
-        {pending ? 'Signing in...' : 'Sign in'}
+        {pending ? 'Signing up...' : 'Sign up'}
       </Button>
     );
   };
   return (
-    <form action={signInAction}>
+    <form action={signUpAction}>
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <div className="space-y-6">
         <div className="space-y-1">
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" name="name" type="text" required autoComplete="name" />
+        </div>
+        <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            defaultValue={signInDefaultValues.email}
-          />
+          <Input id="email" name="email" type="email" required autoComplete="email" />
         </div>
         <div className="space-y-1">
           <Label htmlFor="password">Password</Label>
@@ -44,20 +40,29 @@ export const CredentailsSignInForm = () => {
             name="password"
             type="password"
             required
-            autoComplete="current-password"
-            defaultValue={signInDefaultValues.password}
+            autoComplete="new-password"
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            required
+            autoComplete="new-password"
           />
         </div>
         <div className="">
-          <SignInButton />
+          <SignUpButton />
         </div>
-        {signInActionData?.success === false && (
-          <div className="text-center text-destructive">{signInActionData.message}</div>
+        {signUpActionData?.success === false && (
+          <div className="text-center text-destructive">{signUpActionData.message}</div>
         )}
         <div className="text-sm text-center text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/sign-up" target="_self" className="link">
-            Sign Up
+          Already have an account?{' '}
+          <Link href="/sign-in" target="_self" className="link">
+            Sign In
           </Link>
         </div>
       </div>
