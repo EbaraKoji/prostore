@@ -1,24 +1,24 @@
+import { auth } from '@/auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { APP_NAME } from '@/lib/constants';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CredentailsSignInForm } from './credentails-signin-form';
-import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { CredentailsSignInForm } from './credentails-signin-form';
 
 export const metadata: Metadata = {
   title: 'Sign In',
 };
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     callbackUrl: string;
-  };
+  }>;
 }
 
 const SignInPage = async ({ searchParams }: Props) => {
-  const { callbackUrl } = searchParams;
+  const { callbackUrl } = await searchParams;
   const session = await auth();
   if (session) {
     return redirect(callbackUrl || '/');

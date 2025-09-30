@@ -6,9 +6,9 @@ import { Label } from '@/components/ui/label';
 import { signInWithCredentials } from '@/lib/actions/user.actions';
 import { signInDefaultValues } from '@/lib/constants';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { useSearchParams } from 'next/navigation';
 
 export const CredentailsSignInForm = () => {
   const [signInActionData, signInAction] = useActionState(signInWithCredentials, undefined);
@@ -34,7 +34,9 @@ export const CredentailsSignInForm = () => {
             type="email"
             required
             autoComplete="email"
-            defaultValue={signInDefaultValues.email}
+            defaultValue={
+              signInActionData?.formData?.get('email')?.toString() || signInDefaultValues.email
+            }
           />
         </div>
         <div className="space-y-1">
@@ -45,7 +47,10 @@ export const CredentailsSignInForm = () => {
             type="password"
             required
             autoComplete="current-password"
-            defaultValue={signInDefaultValues.password}
+            defaultValue={
+              signInActionData?.formData?.get('password')?.toString() ||
+              signInDefaultValues.password
+            }
           />
         </div>
         <div className="">

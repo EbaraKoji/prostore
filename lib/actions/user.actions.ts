@@ -4,18 +4,21 @@ import { signIn, signOut } from '@/auth';
 import { prisma } from '@/db/prisma';
 import { hashSync } from 'bcrypt-ts-edge';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { AuthFormError, formatFormError } from '../utils';
 import { signInFormSchema, signUpFormSchema } from '../validators';
 
-export type SignInActionData = {
+export type AuthActionData = {
   success: boolean;
   message: string;
+  error?: AuthFormError;
+  formData?: FormData;
 };
 
 // Sign in user with credentials
 export async function signInWithCredentials(
   prevState: unknown,
   formData: FormData,
-): Promise<SignInActionData | undefined> {
+): Promise<AuthActionData | undefined> {
   try {
     const user = signInFormSchema.parse({
       email: formData.get('email'),
@@ -28,7 +31,12 @@ export async function signInWithCredentials(
     if (isRedirectError(error)) {
       throw error;
     }
-    return { success: false, message: 'Invalid email or password.' };
+    return {
+      success: false,
+      message: 'Failed to sign in.',
+      error: { other: 'Invalid email or password.' },
+      formData,
+    };
   }
 }
 
@@ -39,7 +47,7 @@ export async function signOutUser() {
 export async function signUpUser(
   prevState: unknown,
   formData: FormData,
-): Promise<SignInActionData | undefined> {
+): Promise<AuthActionData | undefined> {
   try {
     const user = signUpFormSchema.parse({
       name: formData.get('name'),
@@ -62,10 +70,15 @@ export async function signUpUser(
     });
 
     return { success: true, message: 'Succeessfully registered user.' };
-  } catch (error) {
+  } catch (error: unknown) {
     if (isRedirectError(error)) {
       throw error;
     }
-    return { success: false, message: 'Failed to register.' };
+    return {
+      success: false,
+      message: 'Failed to register user',
+      error: formatFormError(error as Error),
+      formData,
+    };
   }
 }

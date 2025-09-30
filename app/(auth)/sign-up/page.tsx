@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 };
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     callbackUrl: string;
-  };
+  }>;
 }
 
 const SignUpPage = async ({ searchParams }: Props) => {
-  const { callbackUrl } = searchParams;
+  const { callbackUrl } = await searchParams;
   const session = await auth();
   if (session) {
     return redirect(callbackUrl || '/');

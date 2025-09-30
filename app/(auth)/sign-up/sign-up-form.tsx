@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signUpUser } from '@/lib/actions/user.actions';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { useSearchParams } from 'next/navigation';
 
 export const SignUpForm = () => {
   const [signUpActionData, signUpAction] = useActionState(signUpUser, undefined);
@@ -27,11 +27,45 @@ export const SignUpForm = () => {
       <div className="space-y-6">
         <div className="space-y-1">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" name="name" type="text" required autoComplete="name" />
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            required
+            autoComplete="name"
+            defaultValue={signUpActionData?.formData?.get('name')?.toString()}
+          />
+          <ul className="ml-4">
+            {signUpActionData?.error?.zod?.map(
+              (err, i) =>
+                err.type === 'name' && (
+                  <li key={i} className="text-destructive text-xs list-disc">
+                    {err.message}
+                  </li>
+                ),
+            )}
+          </ul>
         </div>
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required autoComplete="email" />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            defaultValue={signUpActionData?.formData?.get('email')?.toString()}
+          />
+          <ul className="ml-4">
+            {signUpActionData?.error?.zod?.map(
+              (err, i) =>
+                err.type === 'email' && (
+                  <li key={i} className="text-destructive text-xs list-disc">
+                    {err.message}
+                  </li>
+                ),
+            )}
+          </ul>
         </div>
         <div className="space-y-1">
           <Label htmlFor="password">Password</Label>
@@ -41,7 +75,18 @@ export const SignUpForm = () => {
             type="password"
             required
             autoComplete="new-password"
+            defaultValue={signUpActionData?.formData?.get('password')?.toString()}
           />
+          <ul className="ml-4">
+            {signUpActionData?.error?.zod?.map(
+              (err, i) =>
+                err.type === 'password' && (
+                  <li key={i} className="text-destructive text-xs list-disc">
+                    {err.message}
+                  </li>
+                ),
+            )}
+          </ul>
         </div>
         <div className="space-y-1">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -51,7 +96,18 @@ export const SignUpForm = () => {
             type="password"
             required
             autoComplete="new-password"
+            defaultValue={signUpActionData?.formData?.get('confirmPassword')?.toString()}
           />
+          <ul className="ml-4">
+            {signUpActionData?.error?.zod?.map(
+              (err, i) =>
+                err.type === 'confirmPassword' && (
+                  <li key={i} className="text-destructive text-xs list-disc">
+                    {err.message}
+                  </li>
+                ),
+            )}
+          </ul>
         </div>
         <div className="">
           <SignUpButton />
