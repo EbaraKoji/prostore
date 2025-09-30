@@ -1,9 +1,9 @@
-import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/db/prisma';
-import CredentailsProvider from 'next-auth/providers/credentials';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 import { compareSync } from 'bcrypt-ts-edge';
 import type { NextAuthConfig } from 'next-auth';
+import NextAuth from 'next-auth';
+import CredentailsProvider from 'next-auth/providers/credentials';
 
 export const config = {
   pages: {
@@ -47,12 +47,28 @@ export const config = {
       // Seet the user ID from the token
       if (token.sub) {
         session.user.id = token.sub;
+        // @ts-expect-error('Adding role attr to session.user is OK')
+        session.user.role = token.role;
       }
       // If there is an update, set the username
       if (trigger === 'update') {
         session.user.name = user.name;
       }
       return session;
+    },
+    async jwt({ user, token }) {
+      if (user) {
+        // @ts-expect-error('user contains role attr')
+        token.role = user.role;
+        if (user.name === 'NO_NAME') {
+          token.name = user.email!.split('@')[0];
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { name: token.name },
+          });
+        }
+      }
+      return token;
     },
   },
 } satisfies NextAuthConfig;
