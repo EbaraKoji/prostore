@@ -43,3 +43,11 @@ export const formatFormError = (error: Error): AuthFormError => {
 
   return formError;
 };
+
+export const round = (value: number | string, precision = 2) => {
+  if (typeof value !== 'number' && typeof value !== 'string') {
+    throw new Error('Value must be number or string.');
+  }
+  const p = 10 ** precision;
+  return Math.round((Number(value) + Number.EPSILON) * p) / p;
+};
