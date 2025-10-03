@@ -2,7 +2,7 @@
 
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
-import type { CartItemSchema } from '@/types';
+import type { CartItemSchema, CartSchema } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { round } from '../utils';
@@ -90,7 +90,48 @@ export async function addItemToCart(data: CartItemSchema): Promise<CartActionDat
   }
 }
 
-export async function getMyCart() {
+export async function removeItemFromCart(productId: string) {
+  try {
+    const sessionCartId = (await cookies()).get('sessionCartId')?.value;
+    if (!sessionCartId) throw new Error('Cart session not found.');
+
+    const product = await prisma.product.findFirst({
+      where: { id: productId },
+    });
+    if (product === null) throw new Error('Product not found.');
+    const cart = await getMyCart();
+    if (cart === undefined) throw new Error('Cart not found.');
+    const itemIndex = (cart.items as CartItemSchema[]).findIndex(
+      (cartItem) => cartItem.productId === productId,
+    );
+    if (itemIndex === -1) throw new Error('Item not found.');
+    if (cart.items[itemIndex].qty === 1) {
+      cart.items.splice(itemIndex, 1); // remove the item of itemIndex
+    } else {
+      cart.items[itemIndex].qty -= 1;
+    }
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        items: cart.items as Prisma.CartUpdateitemsInput[],
+        ...calcPrice(cart.items as CartItemSchema[]),
+      },
+    });
+    revalidatePath(`/product/${product.slug}`);
+    return {
+      success: true,
+      message: `$Successfully removed {product.name} from cart.`,
+    };
+  } catch (error) {
+    return {
+      sucess: false,
+      message: (error as Error).message,
+    };
+  }
+}
+
+export async function getMyCart(): Promise<CartSchema | undefined> {
   const sessionCartId = (await cookies()).get('sessionCartId')?.value;
   if (!sessionCartId) throw new Error('Cart session not found.');
 
@@ -104,9 +145,9 @@ export async function getMyCart() {
   return {
     ...cart,
     items: cart.items as CartItemSchema[],
-    itemsPrice: cart.itemsPrice.toNumber(),
-    totalPrice: cart.totalPrice.toNumber(),
-    shippingPrice: cart.shippingPrice.toNumber(),
+    itemsPrice: cart.itemsPrice.toString(),
+    totalPrice: cart.totalPrice.toString(),
+    shippingPrice: cart.shippingPrice.toString(),
     taxPrice: cart.taxPrice.toString(),
   };
 }
