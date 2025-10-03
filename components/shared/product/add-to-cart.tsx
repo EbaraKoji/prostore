@@ -31,7 +31,7 @@ export const AddToCart = ({ item }: Props) => {
       ));
       return;
     }
-    toast.success(`"${item.name}" has been added to cart.`, {
+    toast.success(res.message, {
       action: {
         label: 'Go To Cart',
         onClick: () => {
