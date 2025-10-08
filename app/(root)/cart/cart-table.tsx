@@ -34,7 +34,7 @@ export const CartTable = ({ cart }: Props) => {
       <h1 className="py-4 h2-bold">CartTable</h1>
       {!cart || cart.items.length === 0 ? (
         <div className="">
-          Cart is empty. <Link href="/">Go Shpiing</Link>
+          Cart is empty. <Link href="/">Go Shopping</Link>
         </div>
       ) : (
         <div className="grid md:grid-cols-4 md:gap-5">
