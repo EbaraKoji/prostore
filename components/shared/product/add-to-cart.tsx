@@ -3,10 +3,11 @@
 import { Button } from '@/components/ui/button';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import type { CartItemSchema, CartSchema } from '@/types';
-import { Minus, Plus, Loader } from 'lucide-react';
+import { Loader, Minus, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 import { useTransition } from 'react';
+import { toast } from 'sonner';
+import { toastError } from '../toast/toast-error';
 
 interface Props {
   item: CartItemSchema;
@@ -20,18 +21,7 @@ export const AddToCart = ({ cart, item }: Props) => {
     startTransition(async () => {
       const res = await addItemToCart(item);
       if (!res?.success) {
-        toast.custom((t) => (
-          <div className="flex space-x-4 items-center bg-red-200 border border-red-400 rounded-lg px-2 py-1">
-            <span className="text-sm text-red-700 font-semibold">{res?.message}</span>
-            <Button
-              onClick={() => toast.dismiss(t)}
-              variant="destructive"
-              className="px-1 text-xs cursor-pointer"
-            >
-              Close
-            </Button>
-          </div>
-        ));
+        toastError(res?.message || 'Failed to add item to Cart.', isPending);
         return;
       }
       toast.success(res.message, {
@@ -70,19 +60,7 @@ export const AddToCart = ({ cart, item }: Props) => {
     startTransition(async () => {
       const res = await removeItemFromCart(existItem.productId);
       if (!res?.success) {
-        toast.custom((t) => (
-          <div className="flex space-x-4 items-center bg-red-200 border border-red-400 rounded-lg px-2 py-1">
-            <span className="text-sm text-red-700 font-semibold">{res?.message}</span>
-            <Button
-              onClick={() => toast.dismiss(t)}
-              variant="destructive"
-              className="px-1 text-xs cursor-pointer"
-              disabled={isPending}
-            >
-              Close
-            </Button>
-          </div>
-        ));
+        toastError(res?.message, isPending);
         return;
       }
       toast.success(res.message);

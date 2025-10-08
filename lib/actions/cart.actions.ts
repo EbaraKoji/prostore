@@ -5,9 +5,9 @@ import { prisma } from '@/db/prisma';
 import type { CartItemSchema, CartSchema } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { Prisma } from '../generated/prisma';
 import { round } from '../utils';
 import { cartItemSchema, insertCartSchema } from '../validators';
-import { Prisma } from '../generated/prisma';
 
 const calcPrice = (items: CartItemSchema[]) => {
   const itemsPrice = round(items.reduce((sum, item) => sum + Number(item.price) * item.qty, 0));
