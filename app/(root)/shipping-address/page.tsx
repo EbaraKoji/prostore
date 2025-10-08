@@ -1,9 +1,10 @@
 import { auth } from '@/auth';
+import { CheckoutSteps } from '@/components/shared/checkout-steps';
 import { getMyCart } from '@/lib/actions/cart.actions';
+import { getUserById } from '@/lib/actions/user.actions';
+import { ShippingAddressSchema } from '@/types';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { ShippingAddressSchema } from '@/types';
-import { getUserById } from '@/lib/actions/user.actions';
 import { ShippingAddressForm } from './shipping-address-form';
 
 export const metadata: Metadata = {
@@ -19,9 +20,10 @@ const ShippingAddressPage = async () => {
   const user = await getUserById(userId);
   if (user === null) throw new Error('User not found.');
   return (
-    <div>
+    <>
+      <CheckoutSteps current={1}/>
       <ShippingAddressForm address={user.address as ShippingAddressSchema} />
-    </div>
+    </>
   );
 };
 
