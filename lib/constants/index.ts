@@ -9,3 +9,10 @@ export const signInDefaultValues = {
   email: process.env.ENVIRONMENT === 'development' ? sampleData.users[0].email : '',
   password: process.env.ENVIRONMENT === 'development' ? sampleData.users[0].password : '',
 };
+export const shippingAddressDefaultValue = {
+  fullName: 'John Doe',
+  streetAddress: '123 Main st',
+  city: 'AnyTown',
+  postalCode: '12345',
+  country: 'USA',
+};

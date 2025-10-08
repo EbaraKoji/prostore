@@ -56,3 +56,18 @@ export const insertCartSchema = z.object({
   sessionCartId: z.string().min(1, 'Session cart id is required'),
   userId: z.string().optional().nullable(),
 });
+
+export const shippingAddressSchema = z.object({
+  fullName: z.string().min(3, 'Name must be at least 3 characers'),
+  streetAddress: z.string().min(3, 'Address must be at least 3 characers'),
+  city: z.string().min(3, 'City must be at least 3 characers'),
+  postalCode: z.string().min(3, 'Postal code must be at least 3 characers'),
+  country: z.string().min(3, 'Country must be at least 3 characers'),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+});
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(3, 'Name must be at least 3 characters'),
+  Email: z.string().min(3, 'Email must be at least 3 characters'),
+});
