@@ -107,7 +107,7 @@ export async function updateUserAddress(data: ShippingAddressSchema) {
       where: { id: currentUser.id },
       data: { address },
     });
-    return { sucess: true, message: 'Successfully updated the user address.' };
+    return { success: true, message: 'Successfully updated the user address.' };
   } catch (error) {
     return { success: false, message: (error as Error).message };
   }

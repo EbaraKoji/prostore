@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import { ShippingAddressForm } from './shipping-address-form';
 
 export const metadata: Metadata = {
-  title: 'Shippin Address',
+  title: 'Shipping Address',
 };
 
 const ShippingAddressPage = async () => {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { formatNumberWithDecimal } from './utils';
 import { PAYMENT_METHODS } from './constants';
+import { formatNumberWithDecimal } from './utils';
 
 const currency = z
   .string()
