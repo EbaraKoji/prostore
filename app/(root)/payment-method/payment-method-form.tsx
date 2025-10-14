@@ -22,7 +22,7 @@ import { useTransition } from 'react';
 import { ControllerRenderProps, useForm } from 'react-hook-form';
 
 interface Props {
-  preferredPaymentMethod?: string;
+  preferredPaymentMethod: string | null;
 }
 
 export const PaymentMethodForm = ({ preferredPaymentMethod }: Props) => {
@@ -66,7 +66,11 @@ export const PaymentMethodForm = ({ preferredPaymentMethod }: Props) => {
                       >
                         {PAYMENT_METHODS.map((pMethod) => (
                           <div key={pMethod} className="flex items-center gap-3">
-                            <RadioGroupItem value={pMethod} id={pMethod} />
+                            <RadioGroupItem
+                              value={pMethod}
+                              id={pMethod}
+                              className="cursor-pointer"
+                            />
                             <Label htmlFor={pMethod}>{pMethod}</Label>
                           </div>
                         ))}

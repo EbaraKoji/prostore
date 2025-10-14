@@ -2,10 +2,9 @@
 
 import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/db/prisma';
-import { ShippingAddressSchema } from '@/types';
+import { PaymentMethodSchema, ShippingAddressSchema } from '@/types';
 import { hashSync } from 'bcrypt-ts-edge';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import z from 'zod';
 import { AuthFormError, formatFormError } from '../utils';
 import {
   paymentMethodSchema,
@@ -113,7 +112,7 @@ export async function updateUserAddress(data: ShippingAddressSchema) {
   }
 }
 
-export async function updateUserPaymentMethod(data: z.infer<typeof paymentMethodSchema>) {
+export async function updateUserPaymentMethod(data: PaymentMethodSchema) {
   try {
     const session = await auth();
     const currentUser = await prisma.user.findFirst({
