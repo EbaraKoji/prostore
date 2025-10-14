@@ -70,6 +70,7 @@ export const PaymentMethodForm = ({ preferredPaymentMethod }: Props) => {
                               value={pMethod}
                               id={pMethod}
                               className="cursor-pointer"
+                              checked={field.value === pMethod}
                             />
                             <Label htmlFor={pMethod}>{pMethod}</Label>
                           </div>
