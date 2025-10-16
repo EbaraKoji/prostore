@@ -145,9 +145,9 @@ export async function getMyCart(): Promise<CartSchema | undefined> {
   return {
     ...cart,
     items: cart.items as CartItemSchema[],
-    itemsPrice: cart.itemsPrice.toString(),
-    totalPrice: cart.totalPrice.toString(),
-    shippingPrice: cart.shippingPrice.toString(),
-    taxPrice: cart.taxPrice.toString(),
+    itemsPrice: cart.itemsPrice.toFixed(2).toString(),
+    totalPrice: cart.totalPrice.toFixed(2).toString(),
+    shippingPrice: cart.shippingPrice.toFixed(2).toString(),
+    taxPrice: cart.taxPrice.toFixed(2).toString(),
   };
 }
