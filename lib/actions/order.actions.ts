@@ -7,6 +7,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { insertOrderSchema } from '../validators';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.actions';
+import { PrismaClientUnknownRequestError } from '../generated/prisma/runtime/library';
 
 export async function createOrder() {
   try {
@@ -62,5 +63,28 @@ export async function createOrder() {
   } catch (error) {
     if (isRedirectError(error)) throw error;
     return { success: false, message: (error as Error).message };
+  }
+}
+
+export async function getOrderById(orderId: string) {
+  try {
+    const data = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+      },
+      include: {
+        orderitems: true,
+        user: { select: { name: true, email: true } },
+      },
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    // order not found
+    if ((error as PrismaClientUnknownRequestError).name === 'PrismaClientUnknownRequestError') {
+      return null;
+    }
+    throw new Error((error as Error).message);
   }
 }

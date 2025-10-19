@@ -1,6 +1,6 @@
-import { auth } from '@/auth';
-import { CheckoutSteps } from '@/components/shared/checkout-steps';
-import { Button } from '@/components/ui/button';
+'use client';
+
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -10,69 +10,64 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { getMyCart } from '@/lib/actions/cart.actions';
-import { getUserById } from '@/lib/actions/user.actions';
-import { ShippingAddressSchema } from '@/types';
-import { Metadata } from 'next';
+import { formatDateTime, formatId } from '@/lib/utils';
+import { OrderSchema } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { PlaceOrderForm } from './place-order-form';
 
-export const metadata: Metadata = {
-  title: 'Place Order',
-};
+interface Props {
+  order: OrderSchema;
+}
 
-const PlaceOrder = async () => {
-  const cart = await getMyCart();
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (userId === undefined) throw new Error('User not found');
-  const user = await getUserById(userId);
-  if (user === null) throw new Error('User not found');
-
-  if (cart === undefined || cart.items.length === 0) redirect('/cart');
-  if (user.address === null) redirect('/shipping-address');
-  if (user.paymentMethod === null) redirect('/payment-method');
-
-  const userAddress = user.address as ShippingAddressSchema;
-
+const OrderDetailsTable = ({ order }: Props) => {
+  const {
+    id,
+    shippingAddress,
+    orderitems,
+    itemsPrice,
+    shippingPrice,
+    taxPrice,
+    totalPrice,
+    paymentMethod,
+    isDelivered,
+    isPaid,
+    deliveredAt,
+    paidAt,
+  } = order;
   return (
     <>
-      <CheckoutSteps current={3} />
-      <h1 className="py-4 text-2xl">Place Order</h1>
+      <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
       <div className="grid md:grid-cols-3 md:gap-5">
-        <div className="md:col-span-2 overflow-x-auto space-y-4">
-          <Card>
-            <CardContent className="p-4 gap-4">
-              <h2 className="text-xl pb-4">Shipping Address</h2>
-              <p>{userAddress.fullName}</p>
-              <p>
-                {userAddress.streetAddress}, {userAddress.city}
-              </p>
-              <p>
-                {userAddress.postalCode}, {userAddress.country}
-              </p>
-              <div className="mt-3">
-                <Link href="/shipping-address">
-                  <Button variant="outline">Edit</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="col-span-2 space-y-4 overflow-x-auto">
           <Card>
             <CardContent className="p-4 gap-4">
               <h2 className="text-xl pb-4">Payment Method</h2>
-              <p>{user.paymentMethod}</p>
-              <div className="mt-3">
-                <Link href="/payment-method">
-                  <Button variant="outline">Edit</Button>
-                </Link>
-              </div>
+              <p className="mb-2">{paymentMethod}</p>
+              {isPaid && paidAt !== null ? (
+                <Badge variant="secondary">Paid at {formatDateTime(paidAt).dateTime}</Badge>
+              ) : (
+                <Badge variant="destructive">Not Paid</Badge>
+              )}
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 gap-4">
+              <h2 className="text-xl pb-4">Shipping Address</h2>
+              <p>{shippingAddress.fullName}</p>
+              <p className="mb-2">
+                {shippingAddress.streetAddress}, {shippingAddress.city}
+                {shippingAddress.postalCode}, {shippingAddress.country}
+              </p>
+              {isDelivered && deliveredAt !== null ? (
+                <Badge variant="secondary">Paid at {formatDateTime(deliveredAt).dateTime}</Badge>
+              ) : (
+                <Badge variant="destructive">Not Delivered</Badge>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent>
               <h2 className="text-xl pb-4">Order Items</h2>
               <Table>
                 <TableHeader>
@@ -83,7 +78,7 @@ const PlaceOrder = async () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {cart.items.map((item) => (
+                  {orderitems.map((item) => (
                     <TableRow key={item.slug}>
                       <TableCell>
                         <Link href={`/product/${item.slug}`} className="flex items-center">
@@ -109,21 +104,20 @@ const PlaceOrder = async () => {
             <CardContent className="p-4 gap-4 space-y-4">
               <div className="flex justify-between">
                 <div>Items</div>
-                <div>${cart.itemsPrice}</div>
+                <div>${itemsPrice}</div>
               </div>
               <div className="flex justify-between">
                 <div>Tax</div>
-                <div>${cart.taxPrice}</div>
+                <div>${taxPrice}</div>
               </div>
               <div className="flex justify-between">
                 <div>Shipping</div>
-                <div>${cart.shippingPrice}</div>
+                <div>${shippingPrice}</div>
               </div>
               <div className="flex justify-between">
                 <div>Total</div>
-                <div>${cart.totalPrice}</div>
+                <div>${totalPrice}</div>
               </div>
-              <PlaceOrderForm />
             </CardContent>
           </Card>
         </div>
@@ -132,4 +126,4 @@ const PlaceOrder = async () => {
   );
 };
 
-export default PlaceOrder;
+export default OrderDetailsTable;
